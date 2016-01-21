@@ -1,0 +1,391 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1AF45B4E1B95B8CD006C1044 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF45B4D1B95B8CD006C1044 /* AppDelegate.swift */; };
+		1AF45B501B95B8CD006C1044 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF45B4F1B95B8CD006C1044 /* ViewController.swift */; };
+		1AF45B521B95B8CD006C1044 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AF45B511B95B8CD006C1044 /* Assets.xcassets */; };
+		1AF45B551B95B8CD006C1044 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AF45B531B95B8CD006C1044 /* Main.storyboard */; };
+		1AF45B601B95B8CD006C1044 /* BabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF45B5F1B95B8CD006C1044 /* BabelTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1AF45B5C1B95B8CD006C1044 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1AF45B421B95B8CD006C1044 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AF45B491B95B8CD006C1044;
+			remoteInfo = Babel;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1AF45B4A1B95B8CD006C1044 /* Babel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Babel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AF45B4D1B95B8CD006C1044 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		1AF45B4F1B95B8CD006C1044 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		1AF45B511B95B8CD006C1044 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1AF45B541B95B8CD006C1044 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		1AF45B561B95B8CD006C1044 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1AF45B5B1B95B8CD006C1044 /* BabelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BabelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AF45B5F1B95B8CD006C1044 /* BabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabelTests.swift; sourceTree = "<group>"; };
+		1AF45B611B95B8CD006C1044 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1AF45B471B95B8CD006C1044 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AF45B581B95B8CD006C1044 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1AF45B411B95B8CD006C1044 = {
+			isa = PBXGroup;
+			children = (
+				1AF45B4C1B95B8CD006C1044 /* Babel */,
+				1AF45B5E1B95B8CD006C1044 /* BabelTests */,
+				1AF45B4B1B95B8CD006C1044 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1AF45B4B1B95B8CD006C1044 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1AF45B4A1B95B8CD006C1044 /* Babel.app */,
+				1AF45B5B1B95B8CD006C1044 /* BabelTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1AF45B4C1B95B8CD006C1044 /* Babel */ = {
+			isa = PBXGroup;
+			children = (
+				1AF45B4D1B95B8CD006C1044 /* AppDelegate.swift */,
+				1AF45B4F1B95B8CD006C1044 /* ViewController.swift */,
+				1AF45B511B95B8CD006C1044 /* Assets.xcassets */,
+				1AF45B531B95B8CD006C1044 /* Main.storyboard */,
+				1AF45B561B95B8CD006C1044 /* Info.plist */,
+			);
+			path = Babel;
+			sourceTree = "<group>";
+		};
+		1AF45B5E1B95B8CD006C1044 /* BabelTests */ = {
+			isa = PBXGroup;
+			children = (
+				1AF45B5F1B95B8CD006C1044 /* BabelTests.swift */,
+				1AF45B611B95B8CD006C1044 /* Info.plist */,
+			);
+			path = BabelTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1AF45B491B95B8CD006C1044 /* Babel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AF45B641B95B8CD006C1044 /* Build configuration list for PBXNativeTarget "Babel" */;
+			buildPhases = (
+				1AF45B461B95B8CD006C1044 /* Sources */,
+				1AF45B471B95B8CD006C1044 /* Frameworks */,
+				1AF45B481B95B8CD006C1044 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Babel;
+			productName = Babel;
+			productReference = 1AF45B4A1B95B8CD006C1044 /* Babel.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1AF45B5A1B95B8CD006C1044 /* BabelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AF45B671B95B8CD006C1044 /* Build configuration list for PBXNativeTarget "BabelTests" */;
+			buildPhases = (
+				1AF45B571B95B8CD006C1044 /* Sources */,
+				1AF45B581B95B8CD006C1044 /* Frameworks */,
+				1AF45B591B95B8CD006C1044 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1AF45B5D1B95B8CD006C1044 /* PBXTargetDependency */,
+			);
+			name = BabelTests;
+			productName = BabelTests;
+			productReference = 1AF45B5B1B95B8CD006C1044 /* BabelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1AF45B421B95B8CD006C1044 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0700;
+				ORGANIZATIONNAME = Xhacker;
+				TargetAttributes = {
+					1AF45B491B95B8CD006C1044 = {
+						CreatedOnToolsVersion = 7.0;
+					};
+					1AF45B5A1B95B8CD006C1044 = {
+						CreatedOnToolsVersion = 7.0;
+						TestTargetID = 1AF45B491B95B8CD006C1044;
+					};
+				};
+			};
+			buildConfigurationList = 1AF45B451B95B8CD006C1044 /* Build configuration list for PBXProject "Babel" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1AF45B411B95B8CD006C1044;
+			productRefGroup = 1AF45B4B1B95B8CD006C1044 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1AF45B491B95B8CD006C1044 /* Babel */,
+				1AF45B5A1B95B8CD006C1044 /* BabelTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1AF45B481B95B8CD006C1044 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AF45B521B95B8CD006C1044 /* Assets.xcassets in Resources */,
+				1AF45B551B95B8CD006C1044 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AF45B591B95B8CD006C1044 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1AF45B461B95B8CD006C1044 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AF45B501B95B8CD006C1044 /* ViewController.swift in Sources */,
+				1AF45B4E1B95B8CD006C1044 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AF45B571B95B8CD006C1044 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AF45B601B95B8CD006C1044 /* BabelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1AF45B5D1B95B8CD006C1044 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1AF45B491B95B8CD006C1044 /* Babel */;
+			targetProxy = 1AF45B5C1B95B8CD006C1044 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		1AF45B531B95B8CD006C1044 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1AF45B541B95B8CD006C1044 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1AF45B621B95B8CD006C1044 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1AF45B631B95B8CD006C1044 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		1AF45B651B95B8CD006C1044 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Babel/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = im.xhacker.Babel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1AF45B661B95B8CD006C1044 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Babel/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = im.xhacker.Babel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1AF45B681B95B8CD006C1044 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BabelTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = im.xhacker.BabelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Babel.app/Contents/MacOS/Babel";
+			};
+			name = Debug;
+		};
+		1AF45B691B95B8CD006C1044 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BabelTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = im.xhacker.BabelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Babel.app/Contents/MacOS/Babel";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1AF45B451B95B8CD006C1044 /* Build configuration list for PBXProject "Babel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AF45B621B95B8CD006C1044 /* Debug */,
+				1AF45B631B95B8CD006C1044 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AF45B641B95B8CD006C1044 /* Build configuration list for PBXNativeTarget "Babel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AF45B651B95B8CD006C1044 /* Debug */,
+				1AF45B661B95B8CD006C1044 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		1AF45B671B95B8CD006C1044 /* Build configuration list for PBXNativeTarget "BabelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AF45B681B95B8CD006C1044 /* Debug */,
+				1AF45B691B95B8CD006C1044 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1AF45B421B95B8CD006C1044 /* Project object */;
+}
