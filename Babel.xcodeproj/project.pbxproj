@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1AEAD9D31C5050C500BFFDD6 /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEAD9D21C5050C500BFFDD6 /* Lexer.swift */; };
 		1AEAD9D51C50522900BFFDD6 /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEAD9D41C50522900BFFDD6 /* Token.swift */; };
+		1AEAD9DF1C50DB4D00BFFDD6 /* ClangKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AEAD9DE1C50DB4D00BFFDD6 /* ClangKit.framework */; };
+		1AEAD9E21C50DD7A00BFFDD6 /* ClangKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1AEAD9DE1C50DB4D00BFFDD6 /* ClangKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AF45B4E1B95B8CD006C1044 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF45B4D1B95B8CD006C1044 /* AppDelegate.swift */; };
 		1AF45B501B95B8CD006C1044 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF45B4F1B95B8CD006C1044 /* ViewController.swift */; };
 		1AF45B521B95B8CD006C1044 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AF45B511B95B8CD006C1044 /* Assets.xcassets */; };
@@ -26,10 +28,24 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		1AEAD9E11C50DD6D00BFFDD6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1AEAD9E21C50DD7A00BFFDD6 /* ClangKit.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		1AEAD9D21C5050C500BFFDD6 /* Lexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Lexer.swift; path = Parse/Lexer.swift; sourceTree = "<group>"; };
 		1AEAD9D41C50522900BFFDD6 /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Token.swift; path = Parse/Token.swift; sourceTree = "<group>"; };
 		1AEAD9D61C50CFAA00BFFDD6 /* Babel-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Babel-Bridging-Header.h"; sourceTree = "<group>"; };
+		1AEAD9DE1C50DB4D00BFFDD6 /* ClangKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClangKit.framework; path = Carthage/Build/Mac/ClangKit.framework; sourceTree = SOURCE_ROOT; };
 		1AF45B4A1B95B8CD006C1044 /* Babel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Babel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AF45B4D1B95B8CD006C1044 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1AF45B4F1B95B8CD006C1044 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -46,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AEAD9DF1C50DB4D00BFFDD6 /* ClangKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +114,7 @@
 				1AEAD9D21C5050C500BFFDD6 /* Lexer.swift */,
 				1AEAD9D41C50522900BFFDD6 /* Token.swift */,
 				1AEAD9D61C50CFAA00BFFDD6 /* Babel-Bridging-Header.h */,
+				1AEAD9DE1C50DB4D00BFFDD6 /* ClangKit.framework */,
 			);
 			path = Babel;
 			sourceTree = "<group>";
@@ -120,6 +138,7 @@
 				1AF45B461B95B8CD006C1044 /* Sources */,
 				1AF45B471B95B8CD006C1044 /* Frameworks */,
 				1AF45B481B95B8CD006C1044 /* Resources */,
+				1AEAD9E11C50DD6D00BFFDD6 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -333,6 +352,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Babel",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				INFOPLIST_FILE = Babel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = im.xhacker.Babel;
@@ -348,6 +372,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Babel",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				INFOPLIST_FILE = Babel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = im.xhacker.Babel;
