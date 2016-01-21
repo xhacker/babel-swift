@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1AEAD9D31C5050C500BFFDD6 /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEAD9D21C5050C500BFFDD6 /* Lexer.swift */; };
+		1AEAD9D51C50522900BFFDD6 /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEAD9D41C50522900BFFDD6 /* Token.swift */; };
 		1AF45B4E1B95B8CD006C1044 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF45B4D1B95B8CD006C1044 /* AppDelegate.swift */; };
 		1AF45B501B95B8CD006C1044 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF45B4F1B95B8CD006C1044 /* ViewController.swift */; };
 		1AF45B521B95B8CD006C1044 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AF45B511B95B8CD006C1044 /* Assets.xcassets */; };
@@ -25,6 +27,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1AEAD9D21C5050C500BFFDD6 /* Lexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Lexer.swift; path = Parse/Lexer.swift; sourceTree = "<group>"; };
+		1AEAD9D41C50522900BFFDD6 /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Token.swift; path = Parse/Token.swift; sourceTree = "<group>"; };
+		1AEAD9D61C50CFAA00BFFDD6 /* Babel-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Babel-Bridging-Header.h"; sourceTree = "<group>"; };
 		1AF45B4A1B95B8CD006C1044 /* Babel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Babel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AF45B4D1B95B8CD006C1044 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1AF45B4F1B95B8CD006C1044 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -54,10 +59,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1AEAD9D11C50509700BFFDD6 /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				1AF45B4D1B95B8CD006C1044 /* AppDelegate.swift */,
+				1AF45B4F1B95B8CD006C1044 /* ViewController.swift */,
+				1AF45B511B95B8CD006C1044 /* Assets.xcassets */,
+				1AF45B531B95B8CD006C1044 /* Main.storyboard */,
+				1AF45B561B95B8CD006C1044 /* Info.plist */,
+			);
+			name = "OS X";
+			path = Babel;
+			sourceTree = "<group>";
+		};
 		1AF45B411B95B8CD006C1044 = {
 			isa = PBXGroup;
 			children = (
 				1AF45B4C1B95B8CD006C1044 /* Babel */,
+				1AEAD9D11C50509700BFFDD6 /* OS X */,
 				1AF45B5E1B95B8CD006C1044 /* BabelTests */,
 				1AF45B4B1B95B8CD006C1044 /* Products */,
 			);
@@ -75,11 +94,9 @@
 		1AF45B4C1B95B8CD006C1044 /* Babel */ = {
 			isa = PBXGroup;
 			children = (
-				1AF45B4D1B95B8CD006C1044 /* AppDelegate.swift */,
-				1AF45B4F1B95B8CD006C1044 /* ViewController.swift */,
-				1AF45B511B95B8CD006C1044 /* Assets.xcassets */,
-				1AF45B531B95B8CD006C1044 /* Main.storyboard */,
-				1AF45B561B95B8CD006C1044 /* Info.plist */,
+				1AEAD9D21C5050C500BFFDD6 /* Lexer.swift */,
+				1AEAD9D41C50522900BFFDD6 /* Token.swift */,
+				1AEAD9D61C50CFAA00BFFDD6 /* Babel-Bridging-Header.h */,
 			);
 			path = Babel;
 			sourceTree = "<group>";
@@ -137,6 +154,7 @@
 		1AF45B421B95B8CD006C1044 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = Xhacker;
 				TargetAttributes = {
@@ -193,7 +211,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AF45B501B95B8CD006C1044 /* ViewController.swift in Sources */,
+				1AEAD9D31C5050C500BFFDD6 /* Lexer.swift in Sources */,
 				1AF45B4E1B95B8CD006C1044 /* AppDelegate.swift in Sources */,
+				1AEAD9D51C50522900BFFDD6 /* Token.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,11 +331,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Babel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = im.xhacker.Babel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Babel/Babel-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -323,11 +346,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Babel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = im.xhacker.Babel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Babel/Babel-Bridging-Header.h";
 			};
 			name = Release;
 		};
@@ -376,6 +401,7 @@
 				1AF45B661B95B8CD006C1044 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1AF45B671B95B8CD006C1044 /* Build configuration list for PBXNativeTarget "BabelTests" */ = {
 			isa = XCConfigurationList;
@@ -384,6 +410,7 @@
 				1AF45B691B95B8CD006C1044 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
