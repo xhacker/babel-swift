@@ -1,0 +1,32 @@
+//
+//  Tokens.def
+//  Babel
+//
+//  Created by Dongyuan Liu on 2016-01-21.
+//  Copyright © 2016 Xhacker. All rights reserved.
+//
+
+// This file defines macros used for macro-metaprogramming lexer tokens.
+// Inspired by https://github.com/apple/swift/blob/master/include/swift/Parse/Tokens.def
+
+
+/// KEYWORD(kw)
+///   Expands for every Objective-C keyword, such as 'if', 'else', etc.
+#ifndef KEYWORD
+#define KEYWORD(kw)
+#endif
+
+KEYWORD(if)
+KEYWORD(else)
+
+
+/// PUNCTUATOR(punc)
+///   Expands for every Objective-C punctuator
+#ifndef PUNCTUATOR
+#define PUNCTUATOR(punc)
+#endif
+
+PUNCTUATOR()
+PUNCTUATOR()
+PUNCTUATOR()
+PUNCTUATOR()
