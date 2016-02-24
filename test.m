@@ -1,13 +1,20 @@
 #import "AppKit/AppKit.h"
 
-int main() {
+@interface BABEL_SWIFT_WRAPPER : NSObject
+@end
+
+@implementation BABEL_SWIFT_WRAPPER
+
+- (id)main {
     int someVar = 42;
+    float pi = 3.14;
 
     if (someVar == 42) {
-        NSPopover *popover = self.calendarPopover;
-        [babel run];
+        NSPopover *popover = nil;
+        [popover run];
     }
 
-    NSLog("Hello");
-
+    // NSLog("Hello");
 }
+
+@end
