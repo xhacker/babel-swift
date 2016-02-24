@@ -1,7 +1,13 @@
-// #import <AppKit/AppKit.h>
+#import "AppKit/AppKit.h"
 
-NSInteger someVar = 0;
+int main() {
+    int someVar = 42;
 
-if (someVar == 42) {
-    NSPopover *popover = self.calendarPopover;
+    if (someVar == 42) {
+        NSPopover *popover = self.calendarPopover;
+        [babel run];
+    }
+
+    NSLog("Hello");
+
 }
