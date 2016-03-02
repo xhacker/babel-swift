@@ -17,7 +17,7 @@ print ""
 
 for child in cursor.get_children():
     if (child.kind == CursorKind.OBJC_IMPLEMENTATION_DECL and
-            child.spelling == "BABEL_SWIFT_WRAPPER"):
+            child.spelling == "BABEL_SWIFT_WRAPPER_CLASS"):
         mainCursor = next(child.get_children())
         mainCompoundCursor = list(mainCursor.get_children())[1]
         break
@@ -28,18 +28,33 @@ print asciitree.draw_tree(
     lambda n: "%s (%s)" % (n.spelling or n.displayname, str(n.kind)))
 
 
+TYPE_MAPPING = {
+    "int": "Int"
+}
+
+
 def transform(cursor):
     if cursor.kind == CursorKind.DECL_STMT:
         varDeclCursor = next(cursor.get_children())
         children = list(varDeclCursor.get_children())
 
         if len(children) == 1:
-            literalCursor = children[0]
-            literalToken = next(literalCursor.get_tokens())
-            return "let %s = %s" % (varDeclCursor.spelling, literalToken.spelling)
+            firstChildCursor = children[0]
+            if firstChildCursor.kind in (CursorKind.INTEGER_LITERAL, CursorKind.FLOATING_LITERAL):
+                literalToken = next(firstChildCursor.get_tokens())
+                return "let %s = %s" % (varDeclCursor.spelling, literalToken.spelling)
+            elif firstChildCursor.kind == CursorKind.CSTYLE_CAST_EXPR:
+                token = list(firstChildCursor.get_tokens())[1]
+                unexposedExprCursor = list(firstChildCursor.get_children())[0]
+                return "let %s = %s as %s" % (varDeclCursor.spelling, unexposedExprCursor.spelling, TYPE_MAPPING[token.spelling])
+        elif len(children) == 2:
+            firstChildCursor = children[0]
+            if firstChildCursor.kind == CursorKind.OBJC_CLASS_REF:
+                return "let %s: %s = %s()" % (varDeclCursor.spelling, firstChildCursor.spelling, firstChildCursor.spelling)
+            else:
+                return "Not fully implemented: " + str(cursor.kind)
         else:
-            typeCursor = children[0]
-            return "let %s: %s = %s" % (varDeclCursor.spelling, typeCursor.spelling, "nil")
+            return "Not fully implemented: " + str(cursor.kind)
     elif cursor.kind == CursorKind.IF_STMT:
         stmtCursor = list(cursor.get_children())[0]
         bodyCursor = list(cursor.get_children())[1]
@@ -61,7 +76,7 @@ def transform(cursor):
         targetCursor = next(cursor.get_children())
         return "%s.%s()" % (targetCursor.spelling, cursor.spelling)
 
-    return str(cursor.kind)
+    return "Not implemented: " + str(cursor.kind)
 
 
 print ""
