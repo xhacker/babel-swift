@@ -13,16 +13,17 @@
     double e = 2.71828;
 
     if (someVar == 42) {
-        NSPopover *popover = nil;
+        NSPopover *popover = [[NSPopover alloc] init];
         [popover run];
-    }
-
-    while (1) {
-        int a = 2;
     }
 
     int b = (int) pi;
     MyCustomClass *obj = [[MyCustomClass alloc] init];
+    MyCustomClass *obj2 = obj;
+
+    if (obj == obj2) {
+        [obj doSomething];
+    }
 
     int a = 2;
 }
