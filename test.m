@@ -1,4 +1,3 @@
-// int someVar = 42;
 float pi = 3.14;
 double e = 2.71828;
 

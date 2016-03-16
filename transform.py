@@ -45,7 +45,10 @@ TYPE_MAPPING = {
 
 
 def transform(cursor):
-    if cursor.kind == CursorKind.DECL_STMT:
+    if cursor.kind == CursorKind.DECL_REF_EXPR:
+        return cursor.spelling
+
+    elif cursor.kind == CursorKind.DECL_STMT:
         varDeclCursor = next(cursor.get_children())
         children = list(varDeclCursor.get_children())
 
@@ -65,18 +68,21 @@ def transform(cursor):
             firstChildCursor = children[0]
             if firstChildCursor.kind == CursorKind.OBJC_CLASS_REF:
                 secondChildCursor = expose(children[1])
+                rhs = transform(secondChildCursor)
                 if secondChildCursor.spelling == "init":
                     return "let %s: %s = %s()\n" % (varDeclCursor.spelling, firstChildCursor.spelling, firstChildCursor.spelling)
                 else:
-                    return "let %s: %s = %s\n" % (varDeclCursor.spelling, firstChildCursor.spelling, secondChildCursor.spelling)
+                    return "let %s: %s = %s\n" % (varDeclCursor.spelling, firstChildCursor.spelling, rhs)
             else:
                 return "// Not fully implemented: " + str(cursor.kind) + "\n"
         else:
             return "// Not fully implemented: " + str(cursor.kind) + "\n"
+
     elif cursor.kind == CursorKind.IF_STMT:
         stmtCursor = list(cursor.get_children())[0]
         bodyCursor = list(cursor.get_children())[1]
         return "if " + transform(stmtCursor) + " " + transform(bodyCursor)
+
     elif cursor.kind == CursorKind.BINARY_OPERATOR:
         token = list(cursor.get_tokens())[1]
         lCursor = list(cursor.get_children())[0]
@@ -84,18 +90,24 @@ def transform(cursor):
         lToken = next(lCursor.get_tokens())
         rToken = next(rCursor.get_tokens())
         return "%s %s %s" % (lToken.spelling, token.spelling, rToken.spelling)
+
     elif cursor.kind == CursorKind.COMPOUND_STMT:
         bodyText = "{\n"
         for child in cursor.get_children():
             bodyText += "   " + transform(child) + "\n"
         bodyText += "}\n"
         return bodyText
+
     elif cursor.kind == CursorKind.OBJC_MESSAGE_EXPR:
-        targetCursor = next(cursor.get_children())
+        targetCursor = list(cursor.get_children())[0]
         message = cursor.spelling
         if not message:
-            message = list(cursor.get_tokens())[2].spelling
-        return "%s.%s()\n" % (targetCursor.spelling, message)
+            message = list(targetCursor.get_tokens())[1].spelling
+        param = ""
+        if len(list(cursor.get_children())) > 1:
+            paramCursor = list(cursor.get_children())[1]
+            param = paramCursor.spelling
+        return "%s.%s(%s)\n" % (targetCursor.spelling, message, param)
 
     return "// Not implemented: " + str(cursor.kind) + "\n"
 
