@@ -6,6 +6,7 @@
 @property BABEL_SWIFT_SOME_TYPE {{ property }};
 {% endfor %}
 @end
+
 {% endfor %}
 
 {% for variableName in variableNames %}

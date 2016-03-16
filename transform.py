@@ -53,11 +53,11 @@ def transform(cursor):
             firstChildCursor = expose(children[0])
             if firstChildCursor.kind in (CursorKind.INTEGER_LITERAL, CursorKind.FLOATING_LITERAL):
                 literalToken = next(firstChildCursor.get_tokens())
-                return "let %s = %s" % (varDeclCursor.spelling, literalToken.spelling)
+                return "let %s = %s\n" % (varDeclCursor.spelling, literalToken.spelling)
             elif firstChildCursor.kind == CursorKind.CSTYLE_CAST_EXPR:
                 token = list(firstChildCursor.get_tokens())[1]
                 unexposedExprCursor = list(firstChildCursor.get_children())[0]
-                return "let %s = %s as %s" % (varDeclCursor.spelling, unexposedExprCursor.spelling, TYPE_MAPPING[token.spelling])
+                return "let %s = %s as %s\n" % (varDeclCursor.spelling, unexposedExprCursor.spelling, TYPE_MAPPING[token.spelling])
             else:
                 print firstChildCursor.kind
                 return "Not fully implemented: " + str(cursor.kind)
@@ -66,13 +66,13 @@ def transform(cursor):
             if firstChildCursor.kind == CursorKind.OBJC_CLASS_REF:
                 secondChildCursor = expose(children[1])
                 if secondChildCursor.spelling == "init":
-                    return "let %s: %s = %s()" % (varDeclCursor.spelling, firstChildCursor.spelling, firstChildCursor.spelling)
+                    return "let %s: %s = %s()\n" % (varDeclCursor.spelling, firstChildCursor.spelling, firstChildCursor.spelling)
                 else:
-                    return "let %s: %s = %s" % (varDeclCursor.spelling, firstChildCursor.spelling, secondChildCursor.spelling)
+                    return "let %s: %s = %s\n" % (varDeclCursor.spelling, firstChildCursor.spelling, secondChildCursor.spelling)
             else:
-                return "Not fully implemented: " + str(cursor.kind)
+                return "// Not fully implemented: " + str(cursor.kind) + "\n"
         else:
-            return "Not fully implemented: " + str(cursor.kind)
+            return "// Not fully implemented: " + str(cursor.kind) + "\n"
     elif cursor.kind == CursorKind.IF_STMT:
         stmtCursor = list(cursor.get_children())[0]
         bodyCursor = list(cursor.get_children())[1]
@@ -88,16 +88,16 @@ def transform(cursor):
         bodyText = "{\n"
         for child in cursor.get_children():
             bodyText += "   " + transform(child) + "\n"
-        bodyText += "}"
+        bodyText += "}\n"
         return bodyText
     elif cursor.kind == CursorKind.OBJC_MESSAGE_EXPR:
         targetCursor = next(cursor.get_children())
         message = cursor.spelling
         if not message:
             message = list(cursor.get_tokens())[2].spelling
-        return "%s.%s()" % (targetCursor.spelling, message)
+        return "%s.%s()\n" % (targetCursor.spelling, message)
 
-    return "Not implemented: " + str(cursor.kind)
+    return "// Not implemented: " + str(cursor.kind) + "\n"
 
 
 def main():
@@ -162,8 +162,13 @@ def main():
         lambda n: "%s (%s)" % (n.spelling or n.displayname, str(n.kind)))
 
     print ""
+    swiftSource = ""
     for child in mainCompoundCursor.get_children():
-        print transform(child)
+        swiftSource += transform(child)
+    print swiftSource
+
+    with open("output.swift", "w") as f:
+        f.write(swiftSource)
 
 if __name__ == "__main__":
     main()
