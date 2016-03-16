@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import re
 import clang.cindex
 from clang.cindex import CursorKind
 import asciitree
@@ -17,12 +18,16 @@ def wrapImplementationFile():
     return mPath
 
 
-def generateHeaderFile():
+def generateHeaderFile(variableNames, classNames):
     hPath = "BabelSwiftIdentifiers.h"
     env = Environment(loader=FileSystemLoader("./templates"))
     template = env.get_template("header.h")
     with open(hPath, "w") as f:
-        f.write(template.render())
+        f.write(template.render(variableNames=variableNames, classNames=classNames))
+
+
+def isClassName(identifier):
+    return identifier[0].isupper()
 
 
 def expose(cursor):
@@ -94,13 +99,42 @@ def transform(cursor):
 
 
 def main():
-    mPath = wrapImplementationFile()
-    generateHeaderFile()
-
     clang.cindex.Config.set_library_path("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib")
 
-    index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(False, True))
-    tu = index.parse(mPath, ["-x", "objective-c", "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include"])
+    mPath = wrapImplementationFile()
+
+    variableNames = []
+    classNames = []
+
+    for i in xrange(5):
+        print "Iteration %d" % (i,)
+        generateHeaderFile(variableNames, classNames)
+
+        index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(False, True))
+        tu = index.parse(mPath, ["-x", "objective-c", "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include"])
+
+        errors = filter(lambda d: d.severity >= 3, tu.diagnostics)
+        if len(errors) == 0:
+            break
+
+        first = errors[0]
+        error = first.spelling
+
+        pattern = re.compile("use of undeclared identifier '(.+)'")
+        m = pattern.match(error)
+        if m:
+            identifier = m.group(1)
+            if isClassName(identifier):
+                classNames.append(identifier)
+            else:
+                variableNames.append(identifier)
+        else:
+            break
+    if len(errors) > 0:
+        print "Syntax error."
+        return
+
+    generateHeaderFile(variableNames, classNames)
 
     cursor = tu.cursor
     print cursor.spelling
