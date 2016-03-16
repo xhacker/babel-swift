@@ -4,33 +4,25 @@ import sys
 import clang.cindex
 from clang.cindex import CursorKind
 import asciitree
-
-clang.cindex.Config.set_library_path("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib")
-
-# index = clang.cindex.Index.create()
-index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(False, True))
-tu = index.parse(sys.argv[1], ["-x", "objective-c", "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include"])
-
-cursor = tu.cursor
-print cursor.spelling
-print ""
-
-for child in cursor.get_children():
-    if (child.kind == CursorKind.OBJC_IMPLEMENTATION_DECL and
-            child.spelling == "BABEL_SWIFT_WRAPPER_CLASS"):
-        mainCursor = next(child.get_children())
-        mainCompoundCursor = list(mainCursor.get_children())[1]
-        break
-
-print asciitree.draw_tree(
-    mainCompoundCursor,
-    lambda n: list(n.get_children()),
-    lambda n: "%s (%s)" % (n.spelling or n.displayname, str(n.kind)))
+from jinja2 import Environment, FileSystemLoader
 
 
-TYPE_MAPPING = {
-    "int": "Int"
-}
+def wrapImplementationFile():
+    rawFilepath = sys.argv[1]
+    mPath = "input.m"
+    env = Environment(loader=FileSystemLoader("./templates"))
+    template = env.get_template("method.m")
+    with open(rawFilepath) as f, open(mPath, "w") as input:
+        input.write(template.render(body=f.read()))
+    return mPath
+
+
+def generateHeaderFile():
+    hPath = "BabelSwiftIdentifiers.h"
+    env = Environment(loader=FileSystemLoader("./templates"))
+    template = env.get_template("header.h")
+    with open(hPath, "w") as f:
+        f.write(template.render())
 
 
 def expose(cursor):
@@ -38,6 +30,11 @@ def expose(cursor):
         return list(cursor.get_children())[0]
     else:
         return cursor
+
+
+TYPE_MAPPING = {
+    "int": "Int"
+}
 
 
 def transform(cursor):
@@ -96,6 +93,34 @@ def transform(cursor):
     return "Not implemented: " + str(cursor.kind)
 
 
-print ""
-for child in mainCompoundCursor.get_children():
-    print transform(child)
+def main():
+    mPath = wrapImplementationFile()
+    generateHeaderFile()
+
+    clang.cindex.Config.set_library_path("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib")
+
+    index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(False, True))
+    tu = index.parse(mPath, ["-x", "objective-c", "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include"])
+
+    cursor = tu.cursor
+    print cursor.spelling
+    print ""
+
+    for child in cursor.get_children():
+        if (child.kind == CursorKind.OBJC_IMPLEMENTATION_DECL and
+                child.spelling == "BABEL_SWIFT_WRAPPER_CLASS"):
+            mainCursor = next(child.get_children())
+            mainCompoundCursor = list(mainCursor.get_children())[1]
+            break
+
+    print asciitree.draw_tree(
+        mainCompoundCursor,
+        lambda n: list(n.get_children()),
+        lambda n: "%s (%s)" % (n.spelling or n.displayname, str(n.kind)))
+
+    print ""
+    for child in mainCompoundCursor.get_children():
+        print transform(child)
+
+if __name__ == "__main__":
+    main()
