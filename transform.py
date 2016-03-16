@@ -7,6 +7,8 @@ from clang.cindex import CursorKind
 import asciitree
 from jinja2 import Environment, FileSystemLoader
 
+from oc_class import OCClass
+
 
 def wrapImplementationFile():
     rawFilepath = sys.argv[1]
@@ -18,12 +20,12 @@ def wrapImplementationFile():
     return mPath
 
 
-def generateHeaderFile(variableNames, classNames):
+def generateHeaderFile(variableNames, classes):
     hPath = "BabelSwiftIdentifiers.h"
     env = Environment(loader=FileSystemLoader("./templates"))
     template = env.get_template("header.h")
     with open(hPath, "w") as f:
-        f.write(template.render(variableNames=variableNames, classNames=classNames))
+        f.write(template.render(variableNames=variableNames, classes=classes))
 
 
 def isClassName(identifier):
@@ -104,11 +106,11 @@ def main():
     mPath = wrapImplementationFile()
 
     variableNames = []
-    classNames = []
+    classes = {}
 
     for i in xrange(5):
         print "Iteration %d" % (i,)
-        generateHeaderFile(variableNames, classNames)
+        generateHeaderFile(variableNames, classes)
 
         index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(False, True))
         tu = index.parse(mPath, ["-x", "objective-c", "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include"])
@@ -125,7 +127,7 @@ def main():
         if m:
             identifier = m.group(1)
             if isClassName(identifier):
-                classNames.append(identifier)
+                classes[identifier] = OCClass(identifier)
             else:
                 variableNames.append(identifier)
         else:
@@ -134,7 +136,7 @@ def main():
         print "Syntax error."
         return
 
-    generateHeaderFile(variableNames, classNames)
+    generateHeaderFile(variableNames, classes)
 
     cursor = tu.cursor
     print cursor.spelling
