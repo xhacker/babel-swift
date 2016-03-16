@@ -16,3 +16,9 @@ if (obj == obj2) {
 }
 
 int a = 2;
+
+
+PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+[currentInstallation setDeviceTokenFromData:deviceToken];
+currentInstallation.channels = @[ @"global" ];
+[currentInstallation saveInBackground];

@@ -108,8 +108,8 @@ def main():
     variableNames = []
     classes = {}
 
-    for i in xrange(5):
-        print "Iteration %d" % (i,)
+    for i in xrange(50):
+        print "\nIteration %d" % (i,)
         generateHeaderFile(variableNames, classes)
 
         index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(False, True))
@@ -122,14 +122,21 @@ def main():
         first = errors[0]
         error = first.spelling
 
-        pattern = re.compile("use of undeclared identifier '(.+)'")
-        m = pattern.match(error)
-        if m:
+        undeclaredIdentifierPattern = re.compile("use of undeclared identifier '(.+)'")
+        propertyNotFoundPattern = re.compile("property '(.+)' not found on object of type '(.+) \\*'")
+
+        if undeclaredIdentifierPattern.match(error):
+            m = undeclaredIdentifierPattern.match(error)
             identifier = m.group(1)
             if isClassName(identifier):
                 classes[identifier] = OCClass(identifier)
             else:
                 variableNames.append(identifier)
+        elif propertyNotFoundPattern.match(error):
+            m = propertyNotFoundPattern.match(error)
+            identifier = m.group(1)
+            className = m.group(2)
+            classes[className].properties.append(identifier)
         else:
             break
     if len(errors) > 0:
