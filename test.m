@@ -1,5 +1,6 @@
 float pi = 3.14;
 double e = 2.71828;
+NSNumber *num = @42;
 
 if (someVar == 42) {
     NSPopover *popover = [[NSPopover alloc] init];

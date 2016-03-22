@@ -2,8 +2,11 @@
 
 import sys
 import re
+
+sys.path.append('/Users/xhacker/Warehouse/llvm/tools/clang/bindings/python')
 import clang.cindex
 from clang.cindex import CursorKind
+
 import asciitree
 from jinja2 import Environment, FileSystemLoader
 
@@ -84,12 +87,12 @@ def transform(cursor):
         return "if " + transform(stmtCursor) + " " + transform(bodyCursor)
 
     elif cursor.kind == CursorKind.BINARY_OPERATOR:
-        token = list(cursor.get_tokens())[1]
+        opToken = list(cursor.get_tokens())[1]
         lCursor = list(cursor.get_children())[0]
         rCursor = list(cursor.get_children())[1]
         lToken = next(lCursor.get_tokens())
         rToken = next(rCursor.get_tokens())
-        return "%s %s %s" % (lToken.spelling, token.spelling, rToken.spelling)
+        return "%s %s %s" % (lToken.spelling, opToken.spelling, rToken.spelling)
 
     elif cursor.kind == CursorKind.COMPOUND_STMT:
         bodyText = "{\n"
@@ -113,7 +116,8 @@ def transform(cursor):
 
 
 def main():
-    clang.cindex.Config.set_library_path("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib")
+    # clang.cindex.Config.set_library_path("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib")
+    clang.cindex.Config.set_library_path("/Users/xhacker/Warehouse/llvm-xcode/Debug/lib")
 
     mPath = wrapImplementationFile()
 
