@@ -2,6 +2,7 @@ env
 *.pyc
 
 notes*.txt
+tmp/*
 
 input.m
 output.swift

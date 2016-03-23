@@ -119,6 +119,14 @@ def main():
     # clang.cindex.Config.set_library_path("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib")
     clang.cindex.Config.set_library_path("/Users/xhacker/Warehouse/llvm-xcode/Debug/lib")
 
+    # Generate PCH
+    print "Generating PCH..."
+    index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(True, False))
+    appKitHeaderPath = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/AppKit.h"
+    tu = index.parse(appKitHeaderPath, ["-x", "objective-c-header"])
+    tu.save("tmp/AppKit.pch")
+    print "Done."
+
     mPath = wrapImplementationFile()
 
     variableNames = []
@@ -128,8 +136,12 @@ def main():
         print "\nIteration %d" % (i,)
         generateHeaderFile(variableNames, classes)
 
-        index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(False, True))
-        tu = index.parse(mPath, ["-x", "objective-c", "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include"])
+        # clang_createIndex(int excludeDeclarationsFromPCH, int displayDiagnostics);
+        index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(True, True))
+        tu = index.parse(mPath, [
+            "-x", "objective-c",
+            "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include",
+            "-include-pch", "tmp/AppKit.pch"])
 
         errors = filter(lambda d: d.severity >= 3, tu.diagnostics)
         if len(errors) == 0:
