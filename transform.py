@@ -11,10 +11,10 @@ from clang.cindex import CursorKind
 import asciitree
 from jinja2 import Environment, FileSystemLoader
 
-from oc_class import OCClass
+from oc_structures import OCClass, OCProperty
 
 
-def wrapImplementationFile():
+def generateImplementationFile():
     rawFilepath = sys.argv[1]
     mPath = "input.m"
     env = Environment(loader=FileSystemLoader("./templates"))
@@ -25,7 +25,7 @@ def wrapImplementationFile():
 
 
 def generateHeaderFile(variableNames, classes):
-    hPath = "BabelSwiftIdentifiers.h"
+    hPath = "BabelSwiftHeader.h"
     env = Environment(loader=FileSystemLoader("./templates"))
     template = env.get_template("header.h")
     with open(hPath, "w") as f:
@@ -46,6 +46,8 @@ def unwrap(cursor):
     else:
         return cursor
 
+
+BABEL_SWIFT_WRAPPER_CLASS_NAME = "__BABEL_SWIFT_WRAPPER_CLASS__"
 
 TYPE_MAPPING = {
     "int": "Int"
@@ -153,10 +155,11 @@ def main():
         tu.save(pchPath)
         print "Done."
 
-    mPath = wrapImplementationFile()
+    mPath = generateImplementationFile()
 
     variableNames = []
     classes = {}
+    classes[BABEL_SWIFT_WRAPPER_CLASS_NAME] = OCClass(BABEL_SWIFT_WRAPPER_CLASS_NAME)
 
     for i in xrange(50):
         print "\nIteration %d" % (i,)
@@ -190,7 +193,13 @@ def main():
             m = propertyNotFoundPattern.match(error)
             identifier = m.group(1)
             className = m.group(2)
-            classes[className].properties.append(identifier)
+
+            newClassName = "__BABEL_SWIFT_TMP_CLASS_{}__".format(len(classes))
+            newClass = OCClass(newClassName)
+            classes[newClassName] = newClass
+
+            property = OCProperty(newClass, identifier)
+            classes[className].properties.append(property)
         else:
             break
     if len(errors) > 0:
@@ -205,7 +214,7 @@ def main():
 
     for child in cursor.get_children():
         if (child.kind == CursorKind.OBJC_IMPLEMENTATION_DECL and
-                child.spelling == "BABEL_SWIFT_WRAPPER_CLASS"):
+                child.spelling == BABEL_SWIFT_WRAPPER_CLASS_NAME):
             mainCursor = next(child.get_children())
             mainCompoundCursor = list(mainCursor.get_children())[1]
             break

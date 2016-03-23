@@ -22,3 +22,8 @@ PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 [currentInstallation setDeviceTokenFromData:deviceToken];
 currentInstallation.channels = @[@"global", @"app", @42];
 [currentInstallation saveInBackground];
+
+if (self.switch1.on)
+{self.switch2.on = NO;}
+{self.switch3.on = NO;}
+{self.switch4.on = NO;}

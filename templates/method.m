@@ -1,12 +1,9 @@
 #import "AppKit/AppKit.h"
-#import "BabelSwiftIdentifiers.h"
+#import "BabelSwiftHeader.h"
 
-@interface BABEL_SWIFT_WRAPPER_CLASS : NSObject
-@end
+@implementation __BABEL_SWIFT_WRAPPER_CLASS__
 
-@implementation BABEL_SWIFT_WRAPPER_CLASS
-
-- (id)BABEL_SWIFT_WRAPPER_METHOD {
+- (id)__BABEL_SWIFT_WRAPPER_METHOD__ {
 {{ body }}
 }
 

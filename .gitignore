@@ -6,4 +6,4 @@ tmp/*
 
 input.m
 output.swift
-BabelSwiftIdentifiers.h
+BabelSwiftHeader.h
