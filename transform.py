@@ -52,22 +52,25 @@ def transform(cursor):
     if cursor.kind == CursorKind.DECL_REF_EXPR:
         return cursor.spelling
 
+    elif cursor.kind == CursorKind.IMPLICIT_CAST_EXPR_STMT:
+        return transform(unwrapImplicitCast(cursor))
+
+    elif cursor.kind in (CursorKind.INTEGER_LITERAL, CursorKind.FLOATING_LITERAL):
+        literalToken = next(cursor.get_tokens())
+        return literalToken.spelling
+
+    elif cursor.kind == CursorKind.CSTYLE_CAST_EXPR:
+        targetType = cursor.get_cstyle_cast_target_type()
+        valueCursor = unwrapImplicitCast(list(cursor.get_children())[0])
+        return "%s as %s\n" % (valueCursor.spelling, TYPE_MAPPING[targetType.spelling])
+
     elif cursor.kind == CursorKind.DECL_STMT:
         varDeclCursor = next(cursor.get_children())
         children = list(varDeclCursor.get_children())
 
         if len(children) == 1:
             firstChildCursor = unwrapImplicitCast(children[0])
-            if firstChildCursor.kind in (CursorKind.INTEGER_LITERAL, CursorKind.FLOATING_LITERAL):
-                literalToken = next(firstChildCursor.get_tokens())
-                return "let %s = %s\n" % (varDeclCursor.spelling, literalToken.spelling)
-            elif firstChildCursor.kind == CursorKind.CSTYLE_CAST_EXPR:
-                targetType = firstChildCursor.get_cstyle_cast_target_type()
-                valueCursor = unwrapImplicitCast(list(firstChildCursor.get_children())[0])
-                return "let %s = %s as %s\n" % (varDeclCursor.spelling, valueCursor.spelling, TYPE_MAPPING[targetType.spelling])
-            else:
-                print firstChildCursor.kind
-                return "/* Not fully implemented: " + str(cursor.kind) + " */"
+            return "let %s = %s\n" % (varDeclCursor.spelling, transform(firstChildCursor))
         elif len(children) == 2:
             firstChildCursor = children[0]
             if firstChildCursor.kind == CursorKind.OBJC_CLASS_REF:
@@ -88,12 +91,11 @@ def transform(cursor):
         return "if " + transform(stmtCursor) + " " + transform(bodyCursor)
 
     elif cursor.kind == CursorKind.BINARY_OPERATOR:
-        opToken = list(cursor.get_tokens())[1]
         lCursor = list(cursor.get_children())[0]
         rCursor = list(cursor.get_children())[1]
-        lToken = next(lCursor.get_tokens())
-        rToken = next(rCursor.get_tokens())
-        return "%s %s %s" % (lToken.spelling, opToken.spelling, rToken.spelling)
+        left = transform(lCursor)
+        right = transform(rCursor)
+        return "%s %s %s" % (left, cursor.spelling, right)
 
     elif cursor.kind == CursorKind.COMPOUND_STMT:
         bodyText = "{\n"
