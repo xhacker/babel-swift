@@ -35,8 +35,8 @@ def isClassName(identifier):
     return identifier[0].isupper()
 
 
-def expose(cursor):
-    if cursor.kind == CursorKind.UNEXPOSED_EXPR:
+def unwrapImplicitCast(cursor):
+    if cursor.kind == CursorKind.IMPLICIT_CAST_EXPR_STMT:
         return list(cursor.get_children())[0]
     else:
         return cursor
@@ -56,21 +56,21 @@ def transform(cursor):
         children = list(varDeclCursor.get_children())
 
         if len(children) == 1:
-            firstChildCursor = expose(children[0])
+            firstChildCursor = unwrapImplicitCast(children[0])
             if firstChildCursor.kind in (CursorKind.INTEGER_LITERAL, CursorKind.FLOATING_LITERAL):
                 literalToken = next(firstChildCursor.get_tokens())
                 return "let %s = %s\n" % (varDeclCursor.spelling, literalToken.spelling)
             elif firstChildCursor.kind == CursorKind.CSTYLE_CAST_EXPR:
                 token = list(firstChildCursor.get_tokens())[1]
-                unexposedExprCursor = list(firstChildCursor.get_children())[0]
-                return "let %s = %s as %s\n" % (varDeclCursor.spelling, unexposedExprCursor.spelling, TYPE_MAPPING[token.spelling])
+                valueCursor = unwrapImplicitCast(list(firstChildCursor.get_children())[0])
+                return "let %s = %s as %s\n" % (varDeclCursor.spelling, valueCursor.spelling, TYPE_MAPPING[token.spelling])
             else:
                 print firstChildCursor.kind
-                return "Not fully implemented: " + str(cursor.kind)
+                return "/* Not fully implemented: " + str(cursor.kind) + " */"
         elif len(children) == 2:
             firstChildCursor = children[0]
             if firstChildCursor.kind == CursorKind.OBJC_CLASS_REF:
-                secondChildCursor = expose(children[1])
+                secondChildCursor = unwrapImplicitCast(children[1])
                 rhs = transform(secondChildCursor)
                 if secondChildCursor.spelling == "init":
                     return "let %s: %s = %s()\n" % (varDeclCursor.spelling, firstChildCursor.spelling, firstChildCursor.spelling)
@@ -102,7 +102,7 @@ def transform(cursor):
         return bodyText
 
     elif cursor.kind == CursorKind.OBJC_MESSAGE_EXPR:
-        targetCursor = list(cursor.get_children())[0]
+        targetCursor = unwrapImplicitCast(list(cursor.get_children())[0])
         message = cursor.spelling
         if not message:
             message = list(targetCursor.get_tokens())[1].spelling
