@@ -36,9 +36,13 @@ def isClassName(identifier):
     return identifier[0].isupper()
 
 
-def unwrapImplicitCast(cursor):
-    if cursor.kind == CursorKind.IMPLICIT_CAST_EXPR_STMT:
-        return list(cursor.get_children())[0]
+def unwrap(cursor):
+    """Unwrap cursor.
+
+    For example, @42 in Swift is simply 42.
+    """
+    if cursor.kind in (CursorKind.IMPLICIT_CAST_EXPR_STMT, CursorKind.OBJC_BOXED_EXPR_STMT):
+        return unwrap(list(cursor.get_children())[0])
     else:
         return cursor
 
@@ -48,12 +52,15 @@ TYPE_MAPPING = {
 }
 
 
-def transform(cursor):
+def transform(cursor, isStmt=False):
     if cursor.kind == CursorKind.DECL_REF_EXPR:
         return cursor.spelling
 
     elif cursor.kind == CursorKind.IMPLICIT_CAST_EXPR_STMT:
-        return transform(unwrapImplicitCast(cursor))
+        return transform(unwrap(cursor))
+
+    elif cursor.kind == CursorKind.OBJC_BOXED_EXPR_STMT:
+        return transform(unwrap(cursor))
 
     elif cursor.kind in (CursorKind.INTEGER_LITERAL, CursorKind.FLOATING_LITERAL):
         literalToken = next(cursor.get_tokens())
@@ -70,7 +77,7 @@ def transform(cursor):
 
     elif cursor.kind == CursorKind.CSTYLE_CAST_EXPR:
         targetType = cursor.get_cstyle_cast_target_type()
-        valueCursor = unwrapImplicitCast(list(cursor.get_children())[0])
+        valueCursor = unwrap(list(cursor.get_children())[0])
         return "%s as %s\n" % (valueCursor.spelling, TYPE_MAPPING[targetType.spelling])
 
     elif cursor.kind == CursorKind.DECL_STMT:
@@ -78,12 +85,12 @@ def transform(cursor):
         children = list(varDeclCursor.get_children())
 
         if len(children) == 1:
-            firstChildCursor = unwrapImplicitCast(children[0])
+            firstChildCursor = unwrap(children[0])
             return "let %s = %s\n" % (varDeclCursor.spelling, transform(firstChildCursor))
         elif len(children) == 2:
             firstChildCursor = children[0]
             if firstChildCursor.kind == CursorKind.OBJC_CLASS_REF:
-                secondChildCursor = unwrapImplicitCast(children[1])
+                secondChildCursor = unwrap(children[1])
                 rhs = transform(secondChildCursor)
                 if secondChildCursor.spelling == "init":
                     return "let %s: %s = %s()\n" % (varDeclCursor.spelling, firstChildCursor.spelling, firstChildCursor.spelling)
@@ -104,17 +111,22 @@ def transform(cursor):
         rCursor = list(cursor.get_children())[1]
         left = transform(lCursor)
         right = transform(rCursor)
-        return "%s %s %s" % (left, cursor.spelling, right)
+        return "%s %s %s%s" % (left, cursor.spelling, right, "\n" if isStmt else "")
+
+    elif cursor.kind == CursorKind.MEMBER_REF_EXPR:
+        member = cursor.spelling
+        parent = transform(list(cursor.get_children())[0])
+        return "{}.{}".format(parent, member)
 
     elif cursor.kind == CursorKind.COMPOUND_STMT:
         bodyText = "{\n"
         for child in cursor.get_children():
-            bodyText += "   " + transform(child) + "\n"
+            bodyText += "   " + transform(child, isStmt=True) + "\n"
         bodyText += "}\n"
         return bodyText
 
     elif cursor.kind == CursorKind.OBJC_MESSAGE_EXPR:
-        targetCursor = unwrapImplicitCast(list(cursor.get_children())[0])
+        targetCursor = unwrap(list(cursor.get_children())[0])
         message = cursor.spelling
         if not message:
             message = list(targetCursor.get_tokens())[1].spelling
@@ -206,7 +218,7 @@ def main():
     print ""
     swiftSource = ""
     for child in mainCompoundCursor.get_children():
-        swiftSource += transform(child)
+        swiftSource += transform(child, isStmt=True)
     print swiftSource
 
     with open("output.swift", "w") as f:
