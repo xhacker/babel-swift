@@ -53,6 +53,11 @@ TYPE_MAPPING = {
     "int": "Int"
 }
 
+CONSTANT_MAPPING = {
+    "YES": "true",
+    "NO": "false"
+}
+
 
 def transform(cursor, isStmt=False):
     if cursor.kind == CursorKind.DECL_REF_EXPR:
@@ -67,6 +72,12 @@ def transform(cursor, isStmt=False):
     elif cursor.kind in (CursorKind.INTEGER_LITERAL, CursorKind.FLOATING_LITERAL):
         literalToken = next(cursor.get_tokens())
         return literalToken.spelling
+
+    elif cursor.kind == CursorKind.OBJC_BOOL_LITERAL_EXPR:
+        return CONSTANT_MAPPING[cursor.spelling]
+
+    elif cursor.kind == CursorKind.OBJC_SELF_EXPR:
+        return cursor.spelling
 
     elif cursor.kind == CursorKind.OBJC_STRING_LITERAL:
         return cursor.spelling
