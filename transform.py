@@ -59,6 +59,15 @@ def transform(cursor):
         literalToken = next(cursor.get_tokens())
         return literalToken.spelling
 
+    elif cursor.kind == CursorKind.OBJC_STRING_LITERAL:
+        return cursor.spelling
+
+    elif cursor.kind == CursorKind.OBJC_ARRAY_LITERAL_STMT:
+        children = list(cursor.get_children())
+        transformedElems = map(transform, children)
+
+        return '[{}]'.format(", ".join(transformedElems))
+
     elif cursor.kind == CursorKind.CSTYLE_CAST_EXPR:
         targetType = cursor.get_cstyle_cast_target_type()
         valueCursor = unwrapImplicitCast(list(cursor.get_children())[0])
@@ -81,9 +90,9 @@ def transform(cursor):
                 else:
                     return "let %s: %s = %s\n" % (varDeclCursor.spelling, firstChildCursor.spelling, rhs)
             else:
-                return "// Not fully implemented: " + str(cursor.kind) + "\n"
+                return "// Cursor kind not fully implemented: " + str(cursor.kind) + "\n"
         else:
-            return "// Not fully implemented: " + str(cursor.kind) + "\n"
+            return "// Cursor kind not fully implemented: " + str(cursor.kind) + "\n"
 
     elif cursor.kind == CursorKind.IF_STMT:
         stmtCursor = list(cursor.get_children())[0]
@@ -115,7 +124,7 @@ def transform(cursor):
             param = paramCursor.spelling
         return "%s.%s(%s)\n" % (targetCursor.spelling, message, param)
 
-    return "// Not implemented: " + str(cursor.kind) + "\n"
+    return "// Cursor kind not supported: " + str(cursor.kind) + "\n"
 
 
 def main():
