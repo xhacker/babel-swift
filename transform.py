@@ -2,6 +2,7 @@
 
 import sys
 import re
+import os
 
 sys.path.append('/Users/xhacker/Warehouse/llvm/tools/clang/bindings/python')
 import clang.cindex
@@ -120,12 +121,14 @@ def main():
     clang.cindex.Config.set_library_path("/Users/xhacker/Warehouse/llvm-xcode/Debug/lib")
 
     # Generate PCH
-    print "Generating PCH..."
-    index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(True, False))
-    appKitHeaderPath = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/AppKit.h"
-    tu = index.parse(appKitHeaderPath, ["-x", "objective-c-header"])
-    tu.save("tmp/AppKit.pch")
-    print "Done."
+    pchPath = "tmp/AppKit.pch"
+    if not os.path.exists(pchPath):
+        print "Generating PCH..."
+        index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(True, False))
+        appKitHeaderPath = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/AppKit.h"
+        tu = index.parse(appKitHeaderPath, ["-x", "objective-c-header"])
+        tu.save(pchPath)
+        print "Done."
 
     mPath = wrapImplementationFile()
 
@@ -141,7 +144,7 @@ def main():
         tu = index.parse(mPath, [
             "-x", "objective-c",
             "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include",
-            "-include-pch", "tmp/AppKit.pch"])
+            "-include-pch", pchPath])
 
         errors = filter(lambda d: d.severity >= 3, tu.diagnostics)
         if len(errors) == 0:
