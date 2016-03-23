@@ -61,9 +61,9 @@ def transform(cursor):
                 literalToken = next(firstChildCursor.get_tokens())
                 return "let %s = %s\n" % (varDeclCursor.spelling, literalToken.spelling)
             elif firstChildCursor.kind == CursorKind.CSTYLE_CAST_EXPR:
-                token = list(firstChildCursor.get_tokens())[1]
+                targetType = firstChildCursor.get_cstyle_cast_target_type()
                 valueCursor = unwrapImplicitCast(list(firstChildCursor.get_children())[0])
-                return "let %s = %s as %s\n" % (varDeclCursor.spelling, valueCursor.spelling, TYPE_MAPPING[token.spelling])
+                return "let %s = %s as %s\n" % (varDeclCursor.spelling, valueCursor.spelling, TYPE_MAPPING[targetType.spelling])
             else:
                 print firstChildCursor.kind
                 return "/* Not fully implemented: " + str(cursor.kind) + " */"
