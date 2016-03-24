@@ -11,7 +11,7 @@ int b = (int) pi;
 MyCustomClass *obj = [[MyCustomClass alloc] init];
 MyCustomClass *obj2 = obj;
 
-if (obj == obj2) {
+if (!(obj == obj2)) {
     [obj doSomething];
 }
 

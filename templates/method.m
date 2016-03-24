@@ -1,4 +1,4 @@
-#import "AppKit/AppKit.h"
+#import <AppKit/AppKit.h>
 #import "BabelSwiftHeader.h"
 
 @implementation __BABEL_SWIFT_WRAPPER_CLASS__

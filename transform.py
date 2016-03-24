@@ -114,6 +114,10 @@ def transform(cursor, isStmt=False):
         else:
             return "// Cursor kind not fully implemented: " + str(cursor.kind) + "\n"
 
+    elif cursor.kind == CursorKind.PAREN_EXPR:
+        firstChild = list(cursor.get_children())[0]
+        return "({})".format(transform(firstChild))
+
     elif cursor.kind == CursorKind.IF_STMT:
         stmtCursor = list(cursor.get_children())[0]
         bodyCursor = list(cursor.get_children())[1]
@@ -125,6 +129,14 @@ def transform(cursor, isStmt=False):
         left = transform(lCursor)
         right = transform(rCursor)
         return "%s %s %s%s" % (left, cursor.spelling, right, "\n" if isStmt else "")
+
+    elif cursor.kind == CursorKind.UNARY_OPERATOR:
+        firstToken = list(cursor.get_tokens())[0]
+        if firstToken.spelling == "!":
+            firstChild = list(cursor.get_children())[0]
+            return "!" + transform(firstChild)
+
+        return "// Cursor kind not fully implemented: " + str(cursor.kind) + "\n"
 
     elif cursor.kind == CursorKind.MEMBER_REF_EXPR:
         member = cursor.spelling
@@ -205,7 +217,7 @@ def main():
             identifier = m.group(1)
             className = m.group(2)
 
-            newClassName = "__BABEL_SWIFT_TMP_CLASS_{}__".format(len(classes))
+            newClassName = "__BABEL_SWIFT_PSEUDO_CLASS_{}__".format(len(classes))
             newClass = OCClass(newClassName)
             classes[newClassName] = newClass
 
