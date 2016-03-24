@@ -86,7 +86,17 @@ def transform(cursor, isStmt=False):
         children = list(cursor.get_children())
         transformedElems = map(transform, children)
 
-        return '[{}]'.format(", ".join(transformedElems))
+        return "[{}]".format(", ".join(transformedElems))
+
+    elif cursor.kind == CursorKind.OBJC_DICTIONARY_LITERAL_STMT:
+        it = cursor.get_children()
+        dictText = "[\n"
+        for child in it:
+            key = child
+            value = next(it)
+            dictText += "    {}: {},\n".format(transform(key), transform(value))
+        dictText += "]"
+        return dictText
 
     elif cursor.kind == CursorKind.CSTYLE_CAST_EXPR:
         targetType = cursor.get_cstyle_cast_target_type()

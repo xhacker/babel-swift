@@ -23,7 +23,24 @@ PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 currentInstallation.channels = @[@"global", @"app", @42];
 [currentInstallation saveInBackground];
 
-if (self.switch1.on)
-{self.switch2.on = NO;}
-{self.switch3.on = NO;}
-{self.switch4.on = NO;}
+
+self.some.dict = @{
+    @"key": @"value",
+    @"anotherKey": @[@1, @2, @3]
+};
+
+
+if (self.some.property) {
+    self.yesOrNo = NO;
+}
+else if (YES) {
+    self.yesOrNo = YES;
+}
+else {
+    self.some.integer = 42;
+}
+
+
+for (int i = 0; i < count; ++i) {
+    int b = 3;
+}
