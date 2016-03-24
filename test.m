@@ -44,3 +44,8 @@ else {
 for (int i = 0; i < count; ++i) {
     int b = 3;
 }
+
+
+while (YES) {
+    NSLog(@"Oh %@ %@", a, b);
+}

@@ -133,6 +133,15 @@ def transform(cursor, isStmt=False):
         bodyCursor = list(cursor.get_children())[1]
         return "if " + transform(stmtCursor) + " " + transform(bodyCursor)
 
+    elif cursor.kind == CursorKind.FOR_STMT:
+        bodyCursor = list(cursor.get_children())[3]
+        return "for (/* FOR_STMT not fully implemented */) " + transform(bodyCursor)
+
+    elif cursor.kind == CursorKind.WHILE_STMT:
+        stmtCursor = list(cursor.get_children())[0]
+        bodyCursor = list(cursor.get_children())[1]
+        return "while " + transform(stmtCursor) + " " + transform(bodyCursor)
+
     elif cursor.kind == CursorKind.BINARY_OPERATOR:
         lCursor = list(cursor.get_children())[0]
         rCursor = list(cursor.get_children())[1]
@@ -156,7 +165,7 @@ def transform(cursor, isStmt=False):
     elif cursor.kind == CursorKind.COMPOUND_STMT:
         bodyText = "{\n"
         for child in cursor.get_children():
-            bodyText += "   " + transform(child, isStmt=True) + "\n"
+            bodyText += "   " + transform(child, isStmt=True)
         bodyText += "}\n"
         return bodyText
 
