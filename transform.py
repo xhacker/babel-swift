@@ -180,6 +180,20 @@ def transform(cursor, isStmt=False):
             param = paramCursor.spelling
         return "%s.%s(%s)\n" % (targetCursor.spelling, message, param)
 
+    elif cursor.kind == CursorKind.CALL_EXPR:
+        it = cursor.get_children()
+        callee = next(it)
+        callText = transform(callee) + "("
+
+        for child in it:
+            callText += transform(child) + ", "
+
+        if callText[-2:] == ", ":
+            callText = callText[:-2]
+
+        callText += ")"
+        return callText + "\n" if isStmt else ""
+
     return "// Cursor kind not supported: " + str(cursor.kind) + "\n"
 
 
