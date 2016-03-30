@@ -100,8 +100,12 @@ def transform(cursor, isStmt=False):
 
     elif cursor.kind == CursorKind.CSTYLE_CAST_EXPR:
         targetType = cursor.get_cstyle_cast_target_type()
+        if targetType.spelling in TYPE_MAPPING:
+            targetTypeInSwift = TYPE_MAPPING[targetType.spelling]
+        else:
+            targetTypeInSwift = targetType.spelling
         valueCursor = unwrap(list(cursor.get_children())[0])
-        return "%s as %s\n" % (valueCursor.spelling, TYPE_MAPPING[targetType.spelling])
+        return "%s as %s\n" % (valueCursor.spelling, targetTypeInSwift)
 
     elif cursor.kind == CursorKind.DECL_STMT:
         varDeclCursor = next(cursor.get_children())
@@ -177,7 +181,7 @@ def transform(cursor, isStmt=False):
         param = ""
         if len(list(cursor.get_children())) > 1:
             paramCursor = list(cursor.get_children())[1]
-            param = paramCursor.spelling
+            param = transform(paramCursor)
         return "%s.%s(%s)\n" % (transform(targetCursor), message, param)
 
     elif cursor.kind == CursorKind.CALL_EXPR:
@@ -237,6 +241,7 @@ def main():
 
         undeclaredIdentifierPattern = re.compile("use of undeclared identifier '(.+)'")
         propertyNotFoundPattern = re.compile("property '(.+)' not found on object of type '(.+) \\*'")
+        unexpectedInterfaceNamePattern = re.compile("unexpected interface name '(.+)': expected expression")
 
         if undeclaredIdentifierPattern.match(error):
             m = undeclaredIdentifierPattern.match(error)
@@ -256,6 +261,12 @@ def main():
 
             property = OCProperty(newClass, identifier)
             classes[className].properties.append(property)
+        elif unexpectedInterfaceNamePattern.match(error):
+            # Sometimes variable names are identified as class names
+            m = unexpectedInterfaceNamePattern.match(error)
+            identifier = m.group(1)
+            del classes[identifier]
+            variableNames.append(identifier)
         else:
             break
     if len(errors) > 0:
