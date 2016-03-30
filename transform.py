@@ -206,7 +206,7 @@ def transform(cursor, isStmt=False):
             callText = callText[:-2]
 
         callText += ")"
-        return callText + "\n" if isStmt else ""
+        return callText + ("\n" if isStmt else "")
 
     return "// Cursor kind not supported: " + str(cursor.kind) + "\n"
 
