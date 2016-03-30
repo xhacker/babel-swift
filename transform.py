@@ -9,19 +9,21 @@ sys.path.append('/Users/xhacker/Warehouse/llvm/tools/clang/bindings/python')
 import clang.cindex
 from clang.cindex import CursorKind
 
+# clang.cindex.Config.set_library_path("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib")
+clang.cindex.Config.set_library_path("/Users/xhacker/Warehouse/llvm-xcode/Debug/lib")
+
 import asciitree
 from jinja2 import Environment, FileSystemLoader
 
 from oc_structures import OCClass, OCProperty
 
 
-def generateImplementationFile():
-    rawFilepath = sys.argv[1]
+def generateImplementationFile(source):
     mPath = "input.m"
     env = Environment(loader=FileSystemLoader("./templates"))
     template = env.get_template("method.m")
-    with open(rawFilepath) as f, open(mPath, "w") as input:
-        input.write(template.render(body=f.read()))
+    with open(mPath, "w") as input:
+        input.write(template.render(body=source))
     return mPath
 
 
@@ -211,10 +213,7 @@ def transform(cursor, isStmt=False):
     return "// Cursor kind not supported: " + str(cursor.kind) + "\n"
 
 
-def main():
-    # clang.cindex.Config.set_library_path("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib")
-    clang.cindex.Config.set_library_path("/Users/xhacker/Warehouse/llvm-xcode/Debug/lib")
-
+def transformCode(objcCode):
     # Generate PCH
     pchPath = "tmp/AppKit.pch"
     if not os.path.exists(pchPath):
@@ -225,7 +224,7 @@ def main():
         tu.save(pchPath)
         print "Done."
 
-    mPath = generateImplementationFile()
+    mPath = generateImplementationFile(objcCode)
 
     variableNames = []
     classes = {}
@@ -301,14 +300,18 @@ def main():
         lambda n: list(n.get_children()),
         lambda n: "%s (%s)" % (n.spelling or n.displayname, str(n.kind)))
 
-    print ""
     swiftSource = ""
     for child in mainCompoundCursor.get_children():
         swiftSource += transform(child, isStmt=True)
-    print swiftSource
+    return swiftSource
 
-    with open("output.swift", "w") as f:
-        f.write(swiftSource)
 
 if __name__ == "__main__":
-    main()
+    filepath = sys.argv[1]
+    with open(filepath, "r") as f:
+        source = f.read()
+    swiftCode = transformCode(source)
+    print swiftCode
+
+    with open("output.swift", "w") as f:
+        f.write(swiftCode)
