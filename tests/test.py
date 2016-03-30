@@ -33,6 +33,32 @@ class TestBuiltinTypes(TransformationTestCase):
             let u = i + i * (2 + (3 - 4) + i)
             """)
 
+    def test_cstyle_cast(self):
+        self.assertTransformation("float i = (float) 42;", "let i = 42 as float")
+
+    def test_nsarray(self):
+        self.assertTransformation("arr = @[@1, @\"abc\", someObj];", "arr = [1, \"abc\", someObj]")
+
+    def test_nsdictionary(self):
+        self.assertTransformation(
+            """
+            NSDictionary *dict = @{
+                kPADCurrentPrice: @19.99,
+                kPADDevName: @"Regular SIA",
+                kPADProductName: @"Inboard",
+            };
+            """,
+            """
+            let dict = [
+                kPADCurrentPrice: 19.99,
+                kPADDevName: "Regular SIA",
+                kPADProductName: "Inboard",
+            ]
+            """)
+
+    def test_boxed_expr(self):
+        self.assertTransformation("num = @(600 + 23);", "num = 600 + 23")
+
 
 class TestUndefinedIdentifiers(TransformationTestCase):
     def test_var(self):
@@ -42,10 +68,10 @@ class TestUndefinedIdentifiers(TransformationTestCase):
         self.assertTransformation("I = 623;", "I = 623")
 
     def test_class(self):
-        self.assertTransformation("obj = [[Object alloc] init];", "obj = Object()")
+        self.assertTransformation("Object *obj = obj0;", "let obj = obj0")
 
     def test_class_lowercase(self):
-        self.assertTransformation("obj = [[object alloc] init];", "obj = object()")
+        self.assertTransformation("object *obj = obj0;", "let obj = obj0")
 
     def test_property(self):
         self.assertTransformation("babel.swift = transformation.tool;", "babel.swift = transformation.tool")
@@ -93,3 +119,57 @@ class TestConditional(TransformationTestCase):
         }
         """
         self.assertTransformation(objc, swift)
+
+
+class TestMessage(TransformationTestCase):
+    def test_simple(self):
+        self.assertTransformation("[popover run];", "popover.run()")
+
+    def test_one_arg(self):
+        self.assertTransformation(
+            "[currentInstallation setDeviceTokenFromData:deviceToken];",
+            "currentInstallation.setDeviceTokenFromData(deviceToken)")
+
+    def test_multi_args(self):
+        self.assertTransformation(
+            "[[RMSharedUserDefaults standardUserDefaults] setValue:token forKey:INUserDefaultsDribbbleToken];",
+            "RMSharedUserDefaults.standardUserDefaults().setValue(token, forKey:INUserDefaultsDribbbleToken)")
+
+    def test_alloc_init(self):
+        self.assertTransformation(
+            "NSPopover *popover = [[NSPopover alloc] init];",
+            "let popover = NSPopover()")
+
+    def test_init_by_class_method(self):
+        self.assertTransformation(
+            "NSMutableArray *arr = [NSMutableArray array];",
+            "let arr = NSMutableArray()")
+
+    def test_selector(self):
+        self.assertTransformation(
+            "menuItem.action = @selector(eventMenuItemClicked:);",
+            "menuItem.action = #selector(eventMenuItemClicked(_:))")
+
+
+class TestFunctionCall(TransformationTestCase):
+    def test_simple(self):
+        self.assertTransformation("CGRectMake(0, 0, 233, 233);", "CGRectMake(0, 0, 233, 233)")
+
+    def test_undefined(self):
+        self.assertTransformation("call_function(some, argument);", "call_function(some, argument)")
+
+    def test_nslog(self):
+        self.assertTransformation("NSLog(@\"Oh %@ %@\", a, b);", "NSLog(\"Oh %@ %@\", a, b)")
+
+
+class TestSwiftSpecialSyntax(TransformationTestCase):
+    def test_enum(self):
+        self.assertFalse(
+            "style = UITableViewCellStyleDefault;",
+            "style = .Default")
+
+    def test_let(self):
+        self.assertTransformation("int a = 1;", "let a = 1")
+
+    def test_var(self):
+        self.assertTransformation("int a = 1; a = 2;", "var a = 1\na = 2")
