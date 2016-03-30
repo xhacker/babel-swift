@@ -229,6 +229,7 @@ def transformCode(objcCode):
     variableNames = []
     classes = {}
     classes[BABEL_SWIFT_WRAPPER_CLASS_NAME] = OCClass(BABEL_SWIFT_WRAPPER_CLASS_NAME)
+    lastAddedClass = None
 
     for i in xrange(50):
         print "\nIteration %d" % (i,)
@@ -257,6 +258,7 @@ def transformCode(objcCode):
             identifier = m.group(1)
             if isClassName(identifier):
                 classes[identifier] = OCClass(identifier)
+                lastAddedClass = identifier
             else:
                 variableNames.append(identifier)
         elif propertyNotFoundPattern.match(error):
@@ -276,6 +278,11 @@ def transformCode(objcCode):
             identifier = m.group(1)
             del classes[identifier]
             variableNames.append(identifier)
+        elif "expected identifier" in error:
+            # Sometimes variable names are identified as class names
+            # E.g. `I = 623;`
+            del classes[lastAddedClass]
+            variableNames.append(lastAddedClass)
         else:
             break
     if len(errors) > 0:
