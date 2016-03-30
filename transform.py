@@ -126,15 +126,15 @@ def transform(cursor, isStmt=False):
             return "let %s = %s\n" % (varDeclCursor.spelling, transform(firstChildCursor))
         elif len(children) == 2:
             firstChildCursor = children[0]
-            if firstChildCursor.kind == CursorKind.OBJC_CLASS_REF:
-                secondChildCursor = unwrap(children[1])
-                rhs = transform(secondChildCursor)
-                if secondChildCursor.spelling == "init":
-                    return "let %s: %s = %s()\n" % (varDeclCursor.spelling, firstChildCursor.spelling, firstChildCursor.spelling)
-                else:
-                    return "let %s: %s = %s\n" % (varDeclCursor.spelling, firstChildCursor.spelling, rhs)
+            secondChildCursor = unwrap(children[1])
+            rhs = transform(secondChildCursor)
+
+            # Since Swift has type inference, drop type (firstChildCursor.spelling) aggressively
+            if secondChildCursor.spelling == "init":
+                # TODO: this should just use `transform()`
+                return "let %s = %s()\n" % (varDeclCursor.spelling, firstChildCursor.spelling)
             else:
-                return "// Cursor kind not fully implemented: " + str(cursor.kind) + "\n"
+                return "let %s = %s\n" % (varDeclCursor.spelling, rhs)
         else:
             return "// Cursor kind not fully implemented: " + str(cursor.kind) + "\n"
 
