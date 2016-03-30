@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import sys
 import re
@@ -43,6 +44,8 @@ def unwrap(cursor):
     """
     if cursor.kind in (CursorKind.IMPLICIT_CAST_EXPR_STMT, CursorKind.OBJC_BOXED_EXPR_STMT):
         return unwrap(list(cursor.get_children())[0])
+    elif cursor.kind == CursorKind.PAREN_EXPR and len(list(cursor.get_children())) == 1:
+        return unwrap(list(cursor.get_children())[0])
     else:
         return cursor
 
@@ -70,7 +73,11 @@ def transform(cursor, isStmt=False):
         return transform(unwrap(cursor))
 
     elif cursor.kind in (CursorKind.INTEGER_LITERAL, CursorKind.FLOATING_LITERAL):
-        literalToken = next(cursor.get_tokens())
+        try:
+            literalToken = next(cursor.get_tokens())
+        except StopIteration:
+            # If there are no tokens, then it’s probably nil
+            return "0"
         return literalToken.spelling
 
     elif cursor.kind == CursorKind.OBJC_BOOL_LITERAL_EXPR:
@@ -100,12 +107,15 @@ def transform(cursor, isStmt=False):
 
     elif cursor.kind == CursorKind.CSTYLE_CAST_EXPR:
         targetType = cursor.get_cstyle_cast_target_type()
-        if targetType.spelling in TYPE_MAPPING:
+        valueInSwift = transform(unwrap(list(cursor.get_children())[0]))
+        if targetType.spelling == "void *" and valueInSwift == "0":
+            # nil case
+            return "nil"
+        elif targetType.spelling in TYPE_MAPPING:
             targetTypeInSwift = TYPE_MAPPING[targetType.spelling]
         else:
             targetTypeInSwift = targetType.spelling
-        valueCursor = unwrap(list(cursor.get_children())[0])
-        return "%s as %s\n" % (valueCursor.spelling, targetTypeInSwift)
+        return "%s as %s\n" % (valueInSwift, targetTypeInSwift)
 
     elif cursor.kind == CursorKind.DECL_STMT:
         varDeclCursor = next(cursor.get_children())
