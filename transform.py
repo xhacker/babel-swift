@@ -60,7 +60,7 @@ CONSTANT_MAPPING = {
 
 
 def transform(cursor, isStmt=False):
-    if cursor.kind == CursorKind.DECL_REF_EXPR:
+    if cursor.kind in (CursorKind.DECL_REF_EXPR, CursorKind.OBJC_CLASS_REF):
         return cursor.spelling
 
     elif cursor.kind == CursorKind.IMPLICIT_CAST_EXPR_STMT:
@@ -178,7 +178,7 @@ def transform(cursor, isStmt=False):
         if len(list(cursor.get_children())) > 1:
             paramCursor = list(cursor.get_children())[1]
             param = paramCursor.spelling
-        return "%s.%s(%s)\n" % (targetCursor.spelling, message, param)
+        return "%s.%s(%s)\n" % (transform(targetCursor), message, param)
 
     elif cursor.kind == CursorKind.CALL_EXPR:
         it = cursor.get_children()
