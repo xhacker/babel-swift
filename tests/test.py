@@ -70,6 +70,17 @@ class TestBuiltinTypes(TransformationTestCase):
         self.assertTransformation("num = @(600 + 23);", "num = 600 + 23")
 
 
+class TestOperators(TransformationTestCase):
+    def test_binary(self):
+        self.assertTransformation("c = a + b;", "c = a + b")
+        self.assertTransformation("meow = me * ow;", "meow = me * ow")
+
+    def test_unary(self):
+        self.assertTransformation("no = !yes;", "no = !yes")
+        self.assertTransformation("C++;", "C += 1")
+        self.assertTransformation("--D;", "D -= 1")
+
+
 class TestUndefinedIdentifiers(TransformationTestCase):
     def test_var(self):
         self.assertTransformation("i = 623;", "i = 623")
