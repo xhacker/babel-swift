@@ -210,6 +210,10 @@ def transform(cursor, isStmt=False):
         callText += ")"
         return callText + ("\n" if isStmt else "")
 
+    elif cursor.kind == CursorKind.UNEXPOSED_EXPR:
+        # TODO: This is a workaround. All unexposed should be exposed by modifying libclang.
+        return transform(list(cursor.get_children())[0])
+
     return "// Cursor kind not supported: " + str(cursor.kind) + "\n"
 
 
@@ -320,5 +324,6 @@ if __name__ == "__main__":
     swiftCode = transformCode(source)
     print swiftCode
 
-    with open("output.swift", "w") as f:
-        f.write(swiftCode)
+    if swiftCode:
+        with open("output.swift", "w") as f:
+            f.write(swiftCode)
