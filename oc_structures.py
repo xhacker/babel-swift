@@ -4,7 +4,7 @@ class OCClass:
         self.properties = []
 
 
-class OCProperty:
+class OCVarDecl:
     def __init__(self, ocClass, identifier):
         self.ocClass = ocClass
         self.identifier = identifier

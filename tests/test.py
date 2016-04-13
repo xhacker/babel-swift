@@ -79,6 +79,9 @@ class TestUndefinedIdentifiers(TransformationTestCase):
     def test_chained_property(self):
         self.assertTransformation("babel.swift.language = @\"Python\";", "babel.swift.language = \"Python\"")
 
+    def test_chained_property_self(self):
+        self.assertTransformation("self.babel.swift = @\"Awesome\";", "self.babel.swift = \"Awesome\"")
+
 
 class TestConditional(TransformationTestCase):
     def test_if(self):

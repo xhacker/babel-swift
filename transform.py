@@ -15,7 +15,7 @@ clang.cindex.Config.set_library_path("/Users/xhacker/Warehouse/llvm-xcode/Debug/
 import asciitree
 from jinja2 import Environment, FileSystemLoader
 
-from oc_structures import OCClass, OCProperty
+from oc_structures import OCClass, OCVarDecl
 
 
 def generateImplementationFile(source):
@@ -27,12 +27,12 @@ def generateImplementationFile(source):
     return mPath
 
 
-def generateHeaderFile(variableNames, classes):
+def generateHeaderFile(varDeclarations, classes):
     hPath = "BabelSwiftHeader.h"
     env = Environment(loader=FileSystemLoader("./templates"))
     template = env.get_template("header.h")
     with open(hPath, "w") as f:
-        f.write(template.render(variableNames=variableNames, classes=classes))
+        f.write(template.render(varDeclarations=varDeclarations, classes=classes))
 
 
 def isClassName(identifier):
@@ -231,14 +231,14 @@ def transformCode(objcCode):
 
     mPath = generateImplementationFile(objcCode)
 
-    variableNames = []
+    varDeclarations = []
     classes = {}
     classes[BABEL_SWIFT_WRAPPER_CLASS_NAME] = OCClass(BABEL_SWIFT_WRAPPER_CLASS_NAME)
     lastAddedClass = None
 
     for i in xrange(50):
         print "\nIteration %d" % (i,)
-        generateHeaderFile(variableNames, classes)
+        generateHeaderFile(varDeclarations, classes)
 
         # clang_createIndex(int excludeDeclarationsFromPCH, int displayDiagnostics);
         index = clang.cindex.Index(clang.cindex.conf.lib.clang_createIndex(True, True))
@@ -265,7 +265,12 @@ def transformCode(objcCode):
                 classes[identifier] = OCClass(identifier)
                 lastAddedClass = identifier
             else:
-                variableNames.append(identifier)
+                newClassName = "__BABEL_SWIFT_PSEUDO_CLASS_{}__".format(len(classes))
+                newClass = OCClass(newClassName)
+                classes[newClassName] = newClass
+
+                varDecl = OCVarDecl(newClass, identifier)
+                varDeclarations.append(varDecl)
         elif propertyNotFoundPattern.match(error):
             m = propertyNotFoundPattern.match(error)
             identifier = m.group(1)
@@ -275,26 +280,38 @@ def transformCode(objcCode):
             newClass = OCClass(newClassName)
             classes[newClassName] = newClass
 
-            property = OCProperty(newClass, identifier)
+            property = OCVarDecl(newClass, identifier)
             classes[className].properties.append(property)
         elif unexpectedInterfaceNamePattern.match(error):
             # Sometimes variable names are identified as class names
             m = unexpectedInterfaceNamePattern.match(error)
             identifier = m.group(1)
             del classes[identifier]
-            variableNames.append(identifier)
+
+            newClassName = "__BABEL_SWIFT_PSEUDO_CLASS_{}__".format(len(classes))
+            newClass = OCClass(newClassName)
+            classes[newClassName] = newClass
+
+            varDecl = OCVarDecl(newClass, identifier)
+            varDeclarations.append(varDecl)
         elif "expected identifier" in error:
             # Sometimes variable names are identified as class names
             # E.g. `I = 623;`
             del classes[lastAddedClass]
-            variableNames.append(lastAddedClass)
+
+            newClassName = "__BABEL_SWIFT_PSEUDO_CLASS_{}__".format(len(classes))
+            newClass = OCClass(newClassName)
+            classes[newClassName] = newClass
+
+            varDecl = OCVarDecl(newClass, lastAddedClass)
+            varDeclarations.append(varDecl)
         else:
             break
     if len(errors) > 0:
         print "Syntax error."
         return
 
-    generateHeaderFile(variableNames, classes)
+    generateHeaderFile(varDeclarations, classes)
 
     cursor = tu.cursor
     print cursor.spelling

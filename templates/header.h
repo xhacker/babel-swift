@@ -1,5 +1,3 @@
-#define BABEL_SWIFT_SOME_TYPE id
-
 {% for key, cls in classes.iteritems()  %}
 @class {{ cls.name }};
 {% endfor %}
@@ -13,6 +11,6 @@
 
 {% endfor %}
 
-{% for variableName in variableNames %}
-BABEL_SWIFT_SOME_TYPE {{ variableName }};
+{% for varDecl in varDeclarations %}
+{{ varDecl.ocClass.name }} *{{ varDecl.identifier }};
 {% endfor %}
