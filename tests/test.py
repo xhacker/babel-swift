@@ -36,6 +36,16 @@ class TestBuiltinTypes(TransformationTestCase):
     def test_cstyle_cast(self):
         self.assertTransformation("float i = (float) 42;", "let i = 42 as float")
 
+    def test_cstyle_obj_cast(self):
+        self.assertTransformation(
+            """
+            UINavigationController *navController = (UINavigationController *)segue.destinationViewController;
+            """,
+            """
+            let navController = segue.destinationViewController as! UINavigationController
+            """
+        )
+
     def test_nsarray(self):
         self.assertTransformation("arr = @[@1, @\"abc\", someObj];", "arr = [1, \"abc\", someObj]")
 
