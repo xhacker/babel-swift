@@ -55,7 +55,8 @@ def unwrap(cursor):
 BABEL_SWIFT_WRAPPER_CLASS_NAME = "__BABEL_SWIFT_WRAPPER_CLASS__"
 
 TYPE_MAPPING = {
-    "int": "Int"
+    "int": "Int32"
+    ""
 }
 
 CONSTANT_MAPPING = {
