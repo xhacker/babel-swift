@@ -2,7 +2,7 @@
 
 NSArray *sortedArray;
 sortedArray = [drinkDetails sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-    NSDate *first = [(Person*)a birthDate];
-    NSDate *second = [(Person*)b birthDate];
+    NSDate *first = [(Person *)a birthDate];
+    NSDate *second = [(Person *)b birthDate];
     return [first compare:second];
 }];

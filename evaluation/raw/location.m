@@ -9,6 +9,4 @@
 
     [locationManager startUpdatingLocation];
     [locationManager requestWhenInUseAuthorization]; // Add This Line
-
-
 }
