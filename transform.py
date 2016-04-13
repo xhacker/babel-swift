@@ -65,15 +65,15 @@ CONSTANT_MAPPING = {
 }
 
 
-def transform(cursor, isStmt=False):
+def visit(cursor, isStmt=False):
     if cursor.kind in (CursorKind.DECL_REF_EXPR, CursorKind.OBJC_CLASS_REF):
         return cursor.spelling
 
     elif cursor.kind == CursorKind.IMPLICIT_CAST_EXPR_STMT:
-        return transform(unwrap(cursor))
+        return visit(unwrap(cursor))
 
     elif cursor.kind == CursorKind.OBJC_BOXED_EXPR_STMT:
-        return transform(unwrap(cursor))
+        return visit(unwrap(cursor))
 
     elif cursor.kind in (CursorKind.INTEGER_LITERAL, CursorKind.FLOATING_LITERAL):
         try:
@@ -94,9 +94,9 @@ def transform(cursor, isStmt=False):
 
     elif cursor.kind == CursorKind.OBJC_ARRAY_LITERAL_STMT:
         children = list(cursor.get_children())
-        transformedElems = map(transform, children)
+        convertedElems = map(visit, children)
 
-        return "[{}]".format(", ".join(transformedElems))
+        return "[{}]".format(", ".join(convertedElems))
 
     elif cursor.kind == CursorKind.OBJC_DICTIONARY_LITERAL_STMT:
         it = cursor.get_children()
@@ -104,13 +104,13 @@ def transform(cursor, isStmt=False):
         for child in it:
             key = child
             value = next(it)
-            dictText += "    {}: {},\n".format(transform(key), transform(value))
+            dictText += "    {}: {},\n".format(visit(key), visit(value))
         dictText += "]"
         return dictText
 
     elif cursor.kind == CursorKind.CSTYLE_CAST_EXPR:
         targetType = cursor.get_cstyle_cast_target_type()
-        valueInSwift = transform(unwrap(list(cursor.get_children())[0]))
+        valueInSwift = visit(unwrap(list(cursor.get_children())[0]))
         if targetType.spelling == "void *" and valueInSwift == "0":
             # nil case
             return "nil"
@@ -126,15 +126,15 @@ def transform(cursor, isStmt=False):
 
         if len(children) == 1:
             firstChildCursor = unwrap(children[0])
-            return "let %s = %s\n" % (varDeclCursor.spelling, transform(firstChildCursor))
+            return "let %s = %s\n" % (varDeclCursor.spelling, visit(firstChildCursor))
         elif len(children) == 2:
             firstChildCursor = children[0]
             secondChildCursor = unwrap(children[1])
-            rhs = transform(secondChildCursor)
+            rhs = visit(secondChildCursor)
 
             # Since Swift has type inference, drop type (firstChildCursor.spelling) aggressively
             if secondChildCursor.spelling == "init":
-                # TODO: this should just use `transform()`
+                # TODO: this should just use `visit()`
                 return "let %s = %s()\n" % (varDeclCursor.spelling, firstChildCursor.spelling)
             else:
                 return "let %s = %s\n" % (varDeclCursor.spelling, rhs)
@@ -143,46 +143,46 @@ def transform(cursor, isStmt=False):
 
     elif cursor.kind == CursorKind.PAREN_EXPR:
         firstChild = list(cursor.get_children())[0]
-        return "({})".format(transform(firstChild))
+        return "({})".format(visit(firstChild))
 
     elif cursor.kind == CursorKind.IF_STMT:
         stmtCursor = list(cursor.get_children())[0]
         bodyCursor = list(cursor.get_children())[1]
-        return "if " + transform(stmtCursor) + " " + transform(bodyCursor)
+        return "if " + visit(stmtCursor) + " " + visit(bodyCursor)
 
     elif cursor.kind == CursorKind.FOR_STMT:
         bodyCursor = list(cursor.get_children())[3]
-        return "for (/* FOR_STMT not fully implemented */) " + transform(bodyCursor)
+        return "for (/* FOR_STMT not fully implemented */) " + visit(bodyCursor)
 
     elif cursor.kind == CursorKind.WHILE_STMT:
         stmtCursor = list(cursor.get_children())[0]
         bodyCursor = list(cursor.get_children())[1]
-        return "while " + transform(stmtCursor) + " " + transform(bodyCursor)
+        return "while " + visit(stmtCursor) + " " + visit(bodyCursor)
 
     elif cursor.kind == CursorKind.BINARY_OPERATOR:
         lCursor = list(cursor.get_children())[0]
         rCursor = list(cursor.get_children())[1]
-        left = transform(lCursor)
-        right = transform(rCursor)
+        left = visit(lCursor)
+        right = visit(rCursor)
         return "%s %s %s%s" % (left, cursor.spelling, right, "\n" if isStmt else "")
 
     elif cursor.kind == CursorKind.UNARY_OPERATOR:
         firstToken = list(cursor.get_tokens())[0]
         if firstToken.spelling == "!":
             firstChild = list(cursor.get_children())[0]
-            return "!" + transform(firstChild)
+            return "!" + visit(firstChild)
 
         return "// Cursor kind not fully implemented: " + str(cursor.kind) + "\n"
 
     elif cursor.kind == CursorKind.MEMBER_REF_EXPR:
         member = cursor.spelling
-        parent = transform(list(cursor.get_children())[0])
+        parent = visit(list(cursor.get_children())[0])
         return "{}.{}".format(parent, member)
 
     elif cursor.kind == CursorKind.COMPOUND_STMT:
         bodyText = "{\n"
         for child in cursor.get_children():
-            bodyText += "   " + transform(child, isStmt=True)
+            bodyText += "   " + visit(child, isStmt=True)
         bodyText += "}\n"
         return bodyText
 
@@ -194,16 +194,16 @@ def transform(cursor, isStmt=False):
         param = ""
         if len(list(cursor.get_children())) > 1:
             paramCursor = list(cursor.get_children())[1]
-            param = transform(paramCursor)
-        return "%s.%s(%s)\n" % (transform(targetCursor), message, param)
+            param = visit(paramCursor)
+        return "%s.%s(%s)\n" % (visit(targetCursor), message, param)
 
     elif cursor.kind == CursorKind.CALL_EXPR:
         it = cursor.get_children()
         callee = next(it)
-        callText = transform(callee) + "("
+        callText = visit(callee) + "("
 
         for child in it:
-            callText += transform(child) + ", "
+            callText += visit(child) + ", "
 
         if callText[-2:] == ", ":
             callText = callText[:-2]
@@ -213,7 +213,7 @@ def transform(cursor, isStmt=False):
 
     elif cursor.kind == CursorKind.UNEXPOSED_EXPR:
         # TODO: This is a workaround. All unexposed should be exposed by modifying libclang.
-        return transform(list(cursor.get_children())[0])
+        return visit(list(cursor.get_children())[0])
 
     return "// Cursor kind not supported: " + str(cursor.kind) + "\n"
 
@@ -331,7 +331,7 @@ def transformCode(objcCode):
 
     swiftSource = ""
     for child in mainCompoundCursor.get_children():
-        swiftSource += transform(child, isStmt=True)
+        swiftSource += visit(child, isStmt=True)
     return swiftSource
 
 
