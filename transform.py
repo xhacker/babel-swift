@@ -195,6 +195,16 @@ def visit(cursor, isStmt=False):
         if len(list(cursor.get_children())) > 1:
             paramCursor = list(cursor.get_children())[1]
             param = visit(paramCursor)
+
+        if message == "alloc" and not param:
+            # alloc doesn't need to be called explicitly in Swift
+            return visit(targetCursor)
+
+        if message == "init" and not param:
+            # Convert to Swift init syntax
+            # TODO: support initWithXXX
+            return "%s()\n" % (visit(targetCursor))
+
         return "%s.%s(%s)\n" % (visit(targetCursor), message, param)
 
     elif cursor.kind == CursorKind.CALL_EXPR:
