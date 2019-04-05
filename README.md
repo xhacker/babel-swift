@@ -1,6 +1,6 @@
 # Babel Swift
 
-Something.
+An Objective-C to Swift converter. This is my CMPT 497 course project at SFU. Final report can be found [here](https://github.com/xhacker/babel-swift-report/blob/master/report.pdf).
 
 ## Useful Commands
 
